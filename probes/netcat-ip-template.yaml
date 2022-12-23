@@ -42,11 +42,11 @@ spec:
             readOnly: true
           resources:
             requests: 
-              cpu: "20m"
-              memory: "40M"
+              cpu: "50m"
+              memory: "50M"
             limits: 
-              cpu: "20m"
-              memory: "40M"
+              cpu: "50m"
+              memory: "50M"
           startupProbe:
             exec:
               command:

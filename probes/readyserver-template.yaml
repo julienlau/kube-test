@@ -60,10 +60,10 @@ spec:
           resources:
             requests: 
               cpu: "20m"
-              memory: "60M"
+              memory: "50M"
             limits: 
               cpu: "20m"
-              memory: "60M"
+              memory: "50M"
           ports:
             - name: http1
               containerPort: 9000
