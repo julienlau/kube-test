@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netcat-lookup
+spec:
+  selector:
+    matchLabels:
+      run: test
+      app: netcat-lookup
+  replicas: @@replicas@@
+  template:
+    metadata:
+      labels:
+        run: test
+        app: netcat-lookup
+    spec:
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: netcat-lookup
+          image: pepitedata/tools:focal
+          imagePullPolicy: Always
+          command:
+          - /bin/bash
+          - -c
+          - |
+            echo "Start netcat loop myhttpserver lookup"; while true ; do for j in {1..@@replicas@@}; do i=myhttpserver-$(($j-1)).myhttpserver.default.svc.cluster.local; nc -w @@timeout_sec@@ $i 9000|| echo "ERROR netcat lookup $i $(date)" & done; sleep @@timeout_sec@@ ; done
+          resources:
+            requests: 
+              cpu: "50m"
+              memory: "50M"
+            limits: 
+              cpu: "50m"
+              memory: "50M"
+          startupProbe:
+            exec:
+              command:
+              - ls
+              - /etc/profile
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - mytest
+              topologyKey: "kubernetes.io/hostname"
