@@ -23,6 +23,7 @@ APIS=$(curl --header "Authorization: Bearer $token" --cacert $cacert -s $url/api
 echo "API Resource Verb Namespaced Kind" >> ${ftmp}
 
 # Get the list of resources/sub-resources from the core API
+api=core
 curl --header "Authorization: Bearer $token" --cacert $cacert -s $url/api/v1 | jq -r --arg api "$api" '.resources | .[] | "\($api) \(.name) \(.verbs | join(",")) \(.namespaced) \(.kind)"' >> ${ftmp}
 
 # Get the list of resources/sub-resources from the other APIs
