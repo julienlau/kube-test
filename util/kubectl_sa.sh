@@ -34,6 +34,7 @@ cacrt=tmp-kubectl_sa-cacert.pem
 rm -f ${cacrt} 2>/dev/null
 cluster=satest-cluster
 ctx=satest-context
+endpoint=https://kubernetes.default.svc:443
 endpoint=`grep -B 1 "name: $(kubectx -c)" ~/.kube/config | grep server | awk '{print $NF}'`
 echo "endpoint : $endpoint"
 if [[ -z $endpoint ]]; then
