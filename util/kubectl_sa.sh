@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# If you want to configure kube-apiserver access from within a pod, please prefer using 
+# either the proxy sidecar pod method 
+# either the pod configuration spec.serviceAccountName=spark-sa and spec.automountServiceAccountToken=True
+
 usage () {
     echo "Usage: $0 [-n spark -s admin-sa -t admintoken-secret)]"
     echo "Examples:"
