@@ -145,7 +145,7 @@ data:
     rw=randwrite
     bs=256k
     numjobs=4
-    size=2G
+    size=4G
     stonewall
 
     [randread256k]
@@ -153,7 +153,7 @@ data:
     rw=randread
     bs=256k
     numjobs=4
-    size=2G
+    size=4G
     stonewall
 
     [randrw256k]
@@ -161,7 +161,7 @@ data:
     rw=randrw
     bs=256k
     numjobs=4
-    size=2G
+    size=4G
     stonewall
     ; -- end job file --
 EOF
