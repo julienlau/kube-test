@@ -71,15 +71,70 @@ data:
     numjobs=1
     size=10G
     time_based=1
-    runtime=120
+    runtime=60
     overwrite=1
     group_reporting=1
     ; space used by each test is : numjobs x size
     ; it is not cleaned after each job
 
-    [randwrite16k]
+    [writelatency-sync]
+    name=writelatency-sync
+    rw=randwrite
+    bs=1K
+    iodepth=1
+    fsync=1
+    size=1G
+    stonewall
+
+    [writelatency]
+    name=writelatency
+    rw=randwrite
+    bs=1K
+    iodepth=1
+    size=1G
+    stonewall
+
+    [readlatency]
+    name=readlatency
+    rw=randread
+    bs=1K
+    iodepth=1
+    size=1G
+    stonewall
+
+    [seqread]
+    name=seqread
+    rw=read
+    bs=256m
+    iodepth=1
+    stonewall
+
+    [seqwrite]
+    name=seqwrite
+    rw=write
+    bs=256m
+    iodepth=1
+    stonewall
+
+    [randwrite]
     name=randwrite
     rw=randwrite
+    bs=16k
+    numjobs=4
+    size=2G
+    stonewall
+
+    [randread]
+    name=randread
+    rw=randread
+    bs=16k
+    numjobs=4
+    size=2G
+    stonewall
+
+    [randrw]
+    name=randrw
+    rw=randrw
     bs=16k
     numjobs=4
     size=2G
@@ -90,15 +145,23 @@ data:
     rw=randwrite
     bs=256k
     numjobs=4
-    size=4G
+    size=2G
     stonewall
 
-    [randwrite10m]
-    name=randwrite10m
-    rw=randwrite
-    bs=10m
+    [randread256k]
+    name=randread256k
+    rw=randread
+    bs=256k
     numjobs=4
-    size=4G
+    size=2G
+    stonewall
+
+    [randrw256k]
+    name=randrw256k
+    rw=randrw
+    bs=256k
+    numjobs=4
+    size=2G
     stonewall
     ; -- end job file --
 EOF
