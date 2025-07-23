@@ -1,0 +1,88 @@
+# test writing 200G on ephemeral storage concurrently on 10 different worker nodes
+# k logs -l app=fio
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fio-config
+data:
+  fio.cfg: |-
+    ; -- start job file --
+    [global]
+    ioengine=libaio
+    verify=0
+    gtod_reduce=1
+    disable_lat=0
+    bs=16k
+    direct=1
+    buffered=0
+    iodepth=256
+    numjobs=1
+    size=200G
+    time_based=1
+    runtime=60
+    overwrite=1
+    group_reporting=1
+    ; space used by each test is : numjobs x size
+    ; it is not cleaned after each job
+
+    [seqwrite]
+    name=seqwrite
+    rw=write
+    bs=256m
+    stonewall
+
+    ; -- end job file --
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: fio
+  name: fio-test
+spec:
+  parallelism: 10
+  completions: 10
+  template:
+    metadata:
+      labels:
+        app: fio
+    spec:
+      #nodeSelector:
+        #kubernetes.io/hostname: 10.0.1.7
+        #ibm-cloud.kubernetes.io/machine-type: cx2.32x64
+      containers:
+      - name: fio
+        image: pepitedata/tools:latest
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "run : fio /opt/fio.cfg"
+          sudo fio /opt/fio.cfg | sudo tee /tmp/fio.log
+          sleep 3600
+        volumeMounts:
+        - mountPath: /opt/
+          name: fio-config-volume
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      imagePullSecrets: 
+        - name: all
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: fio-config
+        name: fio-config-volume
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - fio
+              topologyKey: "kubernetes.io/hostname"
