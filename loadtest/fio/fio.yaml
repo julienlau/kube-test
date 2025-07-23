@@ -61,7 +61,7 @@ spec:
         - -c
         - |
           echo "run : fio /opt/fio.cfg"
-          sudo fio /opt/fio.cfg | sudo tee /tmp/fio.log
+          sudo fio /opt/fio.cfg
           sleep 3600
         volumeMounts:
         - mountPath: /opt/
